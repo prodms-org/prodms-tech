@@ -1,0 +1,14 @@
+basicEnabled: true
+basic:
+  replicaCount: 1
+  
+  image:
+    repository: "ghcr.io/yuryklimchuk"
+    tag: "prodms/tech-server"
+    version: "1.0.0-SNAPSHOT"
+    pullPolicy: Always
+  
+  app:
+    id: "tech"
+    port: 8080
+
