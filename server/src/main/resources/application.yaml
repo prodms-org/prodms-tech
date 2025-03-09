@@ -1,0 +1,3 @@
+db:
+  connection:
+    string: ${DB_CONNECTION_STRING:jdbc:postgresql://localhost:5429/tech?password=pg-pwd&user=pg-user}
