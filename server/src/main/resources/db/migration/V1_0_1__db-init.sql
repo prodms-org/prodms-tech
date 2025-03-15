@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS equipments (
     id                  SERIAL                              PRIMARY KEY,
-    number              VARCHAR(100)                        NOT NULL,
+    number              VARCHAR(100)                        NOT NULL        UNIQUE,
     name                VARCHAR(100)                        NOT NULL,
     type                SMALLINT                            NOT NULL        CHECK (type >= 0 AND type <= 5),
     created_at          TIMESTAMP WITH TIME ZONE            NOT NULL,
@@ -9,7 +9,9 @@ CREATE TABLE IF NOT EXISTS equipments (
 
 CREATE TABLE IF NOT EXISTS equipments_sets (
     id                  SERIAL                              PRIMARY KEY,
-    descriptions        TEXT                                NOT NULL,
+    number              VARCHAR(100)                        NOT NULL        UNIQUE,
+    name                VARCHAR(100)                        NOT NULL,
+    description         TEXT                                NOT NULL,
     created_at          TIMESTAMP WITH TIME ZONE            NOT NULL,
     updated_at          TIMESTAMP WITH TIME ZONE            NOT NULL
 );
@@ -24,7 +26,7 @@ CREATE TABLE IF NOT EXISTS equipments_sets_composition (
 
 CREATE TABLE IF NOT EXISTS blanks (
     id                  SERIAL                                  PRIMARY KEY,
-    number              VARCHAR(100)                            NOT NULL,
+    number              VARCHAR(100)                            NOT NULL    UNIQUE,
     material            VARCHAR(100)                            NOT NULL,
     params              JSONB,
     created_at          TIMESTAMP WITH TIME ZONE                NOT NULL,
@@ -33,7 +35,7 @@ CREATE TABLE IF NOT EXISTS blanks (
 
 CREATE TABLE IF NOT EXISTS processes (
     id                  SERIAL                                  PRIMARY KEY,
-    number              VARCHAR(100)                            NOT NULL,
+    number              VARCHAR(100)                            NOT NULL    UNIQUE,
     unit                VARCHAR(100)                            NOT NULL,
     created_at          TIMESTAMP WITH TIME ZONE                NOT NULL,
     updated_at          TIMESTAMP WITH TIME ZONE                NOT NULL,

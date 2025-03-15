@@ -1,3 +1,10 @@
 db:
   connection:
     string: ${DB_CONNECTION_STRING:jdbc:postgresql://localhost:5429/tech?password=pg-pwd&user=pg-user}
+
+
+defaults:
+  equipmentList:
+    itemsPerPage: ${DEFAULTS_EQUIPMENT_LIST_ITEMS_PER_PAGE:10}
+    page: ${DEFAULTS_EQUIPMENT_LIST_PAGE:0}
+    sortCode: ${DEFAULTS_EQUIPMENT_SORT_CODE:0}
