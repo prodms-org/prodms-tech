@@ -34,7 +34,7 @@ import com.hydroyura.prodms.tech.client.res.SingleEquipmentRes.EquipmentSet;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class EquipmentRepositoryImpl implements EquipmentRepository {
+public class EquipmentRepositoryJdbcTemplateImpl implements EquipmentRepository {
 
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final JdbcTemplate jdbcTemplate;

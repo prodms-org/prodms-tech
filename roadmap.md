@@ -11,7 +11,7 @@
 
 #### processes
 + GET /api/v1/processes - units list
-+ POST /api/v1/processes - create new  unit
++ POST /api/v1/processes - create new unit
 + GET /api/v1/processes/{number} - get single unit
 
 #### processes-steps

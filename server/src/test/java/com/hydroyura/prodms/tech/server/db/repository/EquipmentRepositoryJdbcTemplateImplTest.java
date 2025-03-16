@@ -34,7 +34,7 @@ import org.testcontainers.utility.DockerImageName;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 @RequiredArgsConstructor
-class EquipmentRepositoryImplTest {
+class EquipmentRepositoryJdbcTemplateImplTest {
 
     @ClassRule
     public static PostgreSQLContainer<?> TEST_DB_CONTAINER =
@@ -177,7 +177,7 @@ class EquipmentRepositoryImplTest {
         // given
         String number = "EQ_NUMBER_TEST_1";
         String name = "EQ_NAME_TEST_1";
-        var execResult = TEST_DB_CONTAINER.execInContainer("bash", "-c",
+        TEST_DB_CONTAINER.execInContainer("bash", "-c",
             SQL_EQ_INSERT_NEW.formatted(number, name, 1)
         );
 
