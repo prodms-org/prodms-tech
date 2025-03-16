@@ -8,8 +8,8 @@ spec:
     spec:
       containers:
         - name: curl-container
-          image: curlimages/curl:latest
-          command: ["/bin/sh", "-c"]
+          image: richardjkendall/curl-bash:latest
+          command: ["/bin/bash", "-c"]
           args:
             - |
               equipments=(
