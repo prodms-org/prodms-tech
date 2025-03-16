@@ -24,14 +24,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
 import com.hydroyura.prodms.tech.client.req.EquipmentCreateReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentListReq;
 import com.hydroyura.prodms.tech.client.res.EquipmentListRes;
 import com.hydroyura.prodms.tech.client.res.SingleEquipmentRes;
 import com.hydroyura.prodms.tech.client.res.SingleEquipmentRes.EquipmentSet;
 
-@Component
+
 @RequiredArgsConstructor
 @Slf4j
 public class EquipmentRepositoryJdbcTemplateImpl implements EquipmentRepository {

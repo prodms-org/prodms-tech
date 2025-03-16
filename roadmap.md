@@ -3,11 +3,15 @@
 ## 1.0.0
 ### API endpoints
 #### equipments
-+ GET /api/v1/equipments - units list
-+ POST /api/v1/equipments - create new unit
-+ GET /api/v1/equipments/{number} - get single unit
++ GET /api/v1/equipments - equipments list
++ POST /api/v1/equipments - create new equipment
++ GET /api/v1/equipments/{number} - get single equipment
 
 #### equipment sets
++ GET /api/v1/equipment-sets - equipment-sets list
++ POST /api/v1/equipment-sets - create new equipment-set
++ GET /api/v1/equipment-sets/{number} - get single equipment-set
++ PATCH /api/v1/equipment-sets/{number}/equipments - add equipments to set
 
 #### processes
 + GET /api/v1/processes - units list

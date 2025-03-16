@@ -21,6 +21,13 @@ public class RepositoryTestUtils {
         \s
     """;
 
+    public static final String SQL_EQ_SET_GET_ID_BY_NUMBER = """
+        echo "
+            SELECT id FROM equipments_sets \s
+            WHERE number = '%s'" | psql -U test-pg-user -d test-tech
+        \s
+    """;
+
     public static final String SQL_EQ_SET_INSERT_NEW = """
         echo "
             INSERT INTO equipments_sets (number, name, description, created_at, updated_at) \s
@@ -28,6 +35,8 @@ public class RepositoryTestUtils {
             RETURNING id;" | psql -U test-pg-user -d test-tech
         \s
     """;
+
+
 
     public static final String SQL_EQ_SET_COMP_INSERT_NEW = """
         echo "

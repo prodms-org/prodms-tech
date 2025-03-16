@@ -2,6 +2,8 @@ package com.hydroyura.prodms.tech.server.config;
 
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentRepository;
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentRepositoryJdbcTemplateImpl;
+import com.hydroyura.prodms.tech.server.db.repository.EquipmentSetRepository;
+import com.hydroyura.prodms.tech.server.db.repository.EquipmentSetRepositoryJdbcTemplateImpl;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;
@@ -48,6 +50,13 @@ public class DatabaseConfig {
     EquipmentRepository equipmentRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
                                             JdbcTemplate jdbcTemplate) {
         return new EquipmentRepositoryJdbcTemplateImpl(namedParameterJdbcTemplate, jdbcTemplate);
+    }
+
+    @Bean
+    @Order(4)
+    EquipmentSetRepository equipmentSetRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                                                  JdbcTemplate jdbcTemplate) {
+        return new EquipmentSetRepositoryJdbcTemplateImpl(namedParameterJdbcTemplate, jdbcTemplate);
     }
 
 
