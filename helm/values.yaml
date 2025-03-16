@@ -12,3 +12,8 @@ basic:
     id: "tech"
     port: 8080
 
+  env:
+    valuesFromSecretRef:
+      - name: DB_CONNECTION_STRING
+        secretName: prodms-postgres-tech-cluster-app
+        key: jdbc-uri

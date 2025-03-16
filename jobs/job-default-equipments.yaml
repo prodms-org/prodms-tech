@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: equipments-populator-job
+  namespace: prodms
+spec:
+  template:
+    spec:
+      containers:
+        - name: curl-container
+          image: curlimages/curl:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              equipments=(
+                '{"number": "EQ.100.20.001", "name": "Станок фрезерный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.20.002", "name": "Станок фрезерный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.20.003", "name": "Станок фрезерный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.20.004", "name": "Станок фрезерный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.20.005", "name": "Станок фрезерный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.20.006", "name": "Станок фрезерный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.25.001", "name": "Станок токарный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.25.002", "name": "Станок токарный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.25.003", "name": "Станок токарный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.25.004", "name": "Станок токарный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.25.005", "name": "Станок токарный с ЧПУ", "type": 3}'
+                '{"number": "EQ.100.25.006", "name": "Станок токарный с ЧПУ", "type": 3}'
+                '{"number": "EQ.200.30.001", "name": "Станок сверлильный", "type": 2}'
+                '{"number": "EQ.200.30.002", "name": "Станок сверлильный", "type": 2}'
+                '{"number": "EQ.200.30.003", "name": "Станок сверлильный", "type": 2}'
+              )
+              
+              url=http://tech-svc.prodms.svc:8080/api/v1/equipments
+              
+              for body in "${equipments[@]}"; do
+                echo "Sending request with body: $body"
+                curl -X POST ${url} \
+                  -H "Content-Type: application/json" \
+                  -d "$body"
+                echo ""
+              done
+      restartPolicy: Never
