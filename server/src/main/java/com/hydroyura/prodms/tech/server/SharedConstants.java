@@ -6,4 +6,7 @@ import lombok.experimental.UtilityClass;
 public class SharedConstants {
 
     public static final String RESPONSE_ERROR_MSG_EQUIPMENT_NOT_FOUND = "Equipment with number = [%s] not found";
+
+
+    public static final String RESPONSE_ERROR_MSG_EQUIPMENT_SET_NOT_FOUND = "EquipmentSet with number = [%s] not found";
 }

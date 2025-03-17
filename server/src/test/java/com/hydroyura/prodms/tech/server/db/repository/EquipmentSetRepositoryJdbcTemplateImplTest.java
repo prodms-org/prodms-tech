@@ -387,5 +387,10 @@ class EquipmentSetRepositoryJdbcTemplateImplTest {
     void addEquipments__ONLY_NOT_EXISTED() throws Exception {
     }
 
+    // TODO: no inserting
+    @Test
+    void addEquipments__NOT() throws Exception {
+    }
+
 
 }

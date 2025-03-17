@@ -8,9 +8,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class DefaultParams {
 
     private EquipmentList equipmentList;
+    private EquipmentSetList equipmentSetList;
 
     @Data
     public static class EquipmentList {
+        private Integer itemsPerPage;
+        private Integer page;
+        private Integer sortCode;
+    }
+
+    @Data
+    public static class EquipmentSetList {
         private Integer itemsPerPage;
         private Integer page;
         private Integer sortCode;
