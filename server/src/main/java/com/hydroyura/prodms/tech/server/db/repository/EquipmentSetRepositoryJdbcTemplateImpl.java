@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -229,7 +230,7 @@ public class EquipmentSetRepositoryJdbcTemplateImpl implements EquipmentSetRepos
         List<Map<String, Object>> existedEquipments = namedParameterJdbcTemplate.queryForList(nativeQueryFetchEquipmentIds, paramsFetchEquipmentsIds);
         List<Integer> existedEquipmentIds = existedEquipments
             .stream()
-            .map(v -> (Integer) v.get("id"))
+            .map(v -> (Integer) v.get("eq_id"))
             .toList();
 
         String nativeQueryFetchSetId = """
@@ -249,10 +250,14 @@ public class EquipmentSetRepositoryJdbcTemplateImpl implements EquipmentSetRepos
             INSERT INTO equipments_sets_composition (equipment_id, set_id, created_at, updated_at)
                 VALUES (?, ?, now(), now())
         """;
-        jdbcTemplate.batchUpdate(nativeQueryInsert, batchValues);
+        int[] result = jdbcTemplate.batchUpdate(nativeQueryInsert, batchValues);
+        Integer totalInsertedCount = Arrays.stream(result).sum();
 
+        EquipmentSetAddEquipmentsRes res = new EquipmentSetAddEquipmentsRes();
+        res.setTotalInsertedCount(totalInsertedCount);
+        res.setExistedEquipmentIds(existedEquipmentIds);
 
-        return null;
+        return res;
     }
 
     private static class SingleEquipmentSetRowMapper implements RowMapper<SingleEquipmentSetRes> {

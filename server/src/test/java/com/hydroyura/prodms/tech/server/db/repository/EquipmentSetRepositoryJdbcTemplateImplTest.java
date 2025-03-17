@@ -8,12 +8,12 @@ import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.hydroyura.prodms.tech.client.enums.EquipmentSetSortCode;
-import com.hydroyura.prodms.tech.client.enums.EquipmentSortCode;
-import com.hydroyura.prodms.tech.client.req.EquipmentListReq;
+import com.hydroyura.prodms.tech.client.req.EquipmentSetAddEquipmentsReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentSetCreateReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentSetListReq;
 import com.hydroyura.prodms.tech.client.res.SingleEquipmentSetRes;
 import com.hydroyura.prodms.tech.server.exception.InsertEquipmentSetException;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.junit.ClassRule;
@@ -344,6 +344,47 @@ class EquipmentSetRepositoryJdbcTemplateImplTest {
             .get(result.getSets().size() - 1).getName().split("__")[1]);
         assertEquals(filter.getItemsPerPage() * filter.getPage() + filter.getItemsPerPage() - 1, indexEnd);
 
+    }
+
+    @Test
+    void addEquipments__OK() throws Exception {
+        // given
+        // -- insert EquipmentSet
+        String number = "EQ_SET_NUMBER_TEST_1";
+        String name = "EQ_SET_NAME_TEST_1";
+        String description = "EQ_SET_DESCRIPTION_TEST_1";
+        var execEqSetResult = TEST_DB_CONTAINER.execInContainer("bash", "-c",
+            SQL_EQ_SET_INSERT_NEW.formatted(number, name, description)
+        );
+        Integer eqSetId = Integer.valueOf(
+            execEqSetResult.getStdout()
+                .split("\n")[2]
+                .replace(" ", "")
+        );
+        // -- insert a few Equipments
+        int equipmentsCount = 5;
+        List<String> eqNumbers = new ArrayList<>();
+        for (int i = 0; i < equipmentsCount; i++) {
+            String eqNumber = "EQ_NUMBER_" + i;
+            String eqName = "EQ_NAME_" + i;
+            TEST_DB_CONTAINER.execInContainer("bash", "-c",
+                SQL_EQ_INSERT_NEW.formatted(eqNumber, eqName, 1)
+            );
+            eqNumbers.add(eqNumber);
+        }
+        var equipmentSetAddEquipmentsReq = new EquipmentSetAddEquipmentsReq();
+        equipmentSetAddEquipmentsReq.setNumbers(eqNumbers);
+        // when
+        var result = equipmentSetRepository.addEquipments(number, equipmentSetAddEquipmentsReq);
+
+        // then
+        assertEquals(equipmentsCount, result.getTotalInsertedCount());
+        assertEquals(equipmentsCount, result.getExistedEquipmentIds().size());
+    }
+
+    // TODO: insert only not existed
+    @Test
+    void addEquipments__ONLY_NOT_EXISTED() throws Exception {
     }
 
 
