@@ -1,5 +1,7 @@
 package com.hydroyura.prodms.tech.server.db.repository;
 
+import static com.hydroyura.prodms.tech.server.db.repository.JdbcTemplateUtils.populateField;
+
 import com.hydroyura.prodms.tech.server.exception.InsertEquipmentException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,7 +42,6 @@ public class EquipmentRepositoryJdbcTemplateImpl implements EquipmentRepository 
     private final RowMapper<SingleEquipmentRes> rowMapperSingleEquipment = new SingleEquipmentRowMapper();
     private final RowMapper<EquipmentListRes.Equipment> rowMapperEquipmentList = new EquipmentListRowMapper();
 
-    private static final String LOG_MSG_COLUMN_NOT_EXIST = "Column with name = [{}] doesn't present in resultSet";
     private static final String LOG_MSG_CANNOT_INSERT_EQUIPMENT = """
             Can not insert new equipment with values: number = [%s], name = [%s], type = [%s]
         """;
@@ -199,18 +200,6 @@ public class EquipmentRepositoryJdbcTemplateImpl implements EquipmentRepository 
         List<SingleEquipmentRes> resultList = namedParameterJdbcTemplate.query(nativeQuery, params,
             rowMapperSingleEquipment);
         return resultList.stream().findFirst();
-    }
-
-    private static <T> void populateField(ResultSet rs, Consumer<T> consumer, String column, Class<T> valueType) {
-        T value = null;
-        try {
-            value = rs.getObject(column, valueType);
-        } catch (Exception e) {
-            log.error(LOG_MSG_COLUMN_NOT_EXIST, column, e);
-        }
-        Optional
-            .ofNullable(value)
-            .ifPresent(consumer);
     }
 
     private static class SingleEquipmentRowMapper implements RowMapper<SingleEquipmentRes> {

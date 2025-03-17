@@ -1,5 +1,8 @@
 package com.hydroyura.prodms.tech.server.db.repository;
 
+import static com.hydroyura.prodms.tech.server.db.repository.JdbcTemplateUtils.populateField;
+import static com.hydroyura.prodms.tech.server.db.repository.JdbcTemplateUtils.buildSortAndPagination;
+
 import com.hydroyura.prodms.tech.client.req.EquipmentSetAddEquipmentsReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentSetCreateReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentSetListReq;
@@ -17,7 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,7 +48,6 @@ public class EquipmentSetRepositoryJdbcTemplateImpl implements EquipmentSetRepos
     private static final String LOG_MSG_CANNOT_INSERT_EQUIPMENT_SET = """
             Can not insert new equipment-set with values: number = [%s], name = [%s], description = [%s]
         """;
-    private static final String LOG_MSG_COLUMN_NOT_EXIST = "Column with name = [{}] doesn't present in resultSet";
 
     @Override
     public Integer create(EquipmentSetCreateReq equipmentSet) {
@@ -134,8 +135,12 @@ public class EquipmentSetRepositoryJdbcTemplateImpl implements EquipmentSetRepos
     }
 
     private String buildPagination(EquipmentSetListReq req) {
-        return " ORDER BY " + req.getSortCode().getField() + " " + req.getSortCode().getDirection() +
-            " LIMIT " + req.getItemsPerPage() + " OFFSET " + req.getPage() * req.getItemsPerPage();
+        return buildSortAndPagination(
+            req.getSortCode().getField(),
+            req.getSortCode().getDirection(),
+            req.getItemsPerPage(),
+            req.getPage() * req.getItemsPerPage()
+        );
     }
 
     @AllArgsConstructor
@@ -248,20 +253,6 @@ public class EquipmentSetRepositoryJdbcTemplateImpl implements EquipmentSetRepos
 
 
         return null;
-    }
-
-
-    // TODO: replace it into utility class
-    private static <T> void populateField(ResultSet rs, Consumer<T> consumer, String column, Class<T> valueType) {
-        T value = null;
-        try {
-            value = rs.getObject(column, valueType);
-        } catch (Exception e) {
-            log.error(LOG_MSG_COLUMN_NOT_EXIST, column, e);
-        }
-        Optional
-            .ofNullable(value)
-            .ifPresent(consumer);
     }
 
     private static class SingleEquipmentSetRowMapper implements RowMapper<SingleEquipmentSetRes> {
