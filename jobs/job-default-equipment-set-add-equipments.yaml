@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: equipment-sets-add-equipments-populator-job
+  namespace: prodms
+spec:
+  template:
+    spec:
+      containers:
+        - name: curl-container
+          image: richardjkendall/curl-bash:latest
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              equipmentSet1=EQS.085.32.005
+              equipmentNumList1='{"numbers": ["EQ.100.20.1", "EQ.100.20.2", "EQ.200.30.001"]}'
+              url1=http://tech-svc.prodms.svc:8080/api/v1/equipment-sets/${equipmentSet1}/equipments
+              curl -X PATCH ${url1} \
+                -H "Content-Type: application/json" \
+                -d "$equipmentNumList1"
+              echo ""
+              
+              
+              equipmentSet2=EQS.085.40.002
+              equipmentNumList2='{"numbers": ["EQ.100.25.003", "EQ.100.25.004", "EQ.100.25.005", "EQ.100.25.001", "EQ.100.25.006"]}'
+              url2=http://tech-svc.prodms.svc:8080/api/v1/equipment-sets/${equipmentSet2}/equipments
+              curl -X PATCH ${url2} \
+                -H "Content-Type: application/json" \
+                -d "$equipmentNumList2"
+              echo ""
+              
+              
+              equipmentSet3=EQS.085.40.003
+              equipmentNumList3='{"numbers": ["EQ.100.25.003", "EQ.100.25.004", "EQ.100.25.005", "EQ.100.25.001", "EQ.100.25.006", "EQ.200.30.003", "EQ.100.20.2", "EQ.200.30.001"]}'
+              url3=http://tech-svc.prodms.svc:8080/api/v1/equipment-sets/${equipmentSet3}/equipments
+              curl -X PATCH ${url3} \
+                -H "Content-Type: application/json" \
+                -d "$equipmentNumList3"
+              echo ""
+
+      restartPolicy: Never
