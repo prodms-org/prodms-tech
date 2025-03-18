@@ -1,5 +1,6 @@
 package com.hydroyura.prodms.tech.server.config;
 
+import com.hydroyura.prodms.tech.server.db.repository.BlankRepository;
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentRepository;
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentRepositoryJdbcTemplateImpl;
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentSetRepository;
@@ -57,6 +58,13 @@ public class DatabaseConfig {
     EquipmentSetRepository equipmentSetRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
                                                   JdbcTemplate jdbcTemplate) {
         return new EquipmentSetRepositoryJdbcTemplateImpl(namedParameterJdbcTemplate, jdbcTemplate);
+    }
+
+    @Bean
+    @Order(5)
+    BlankRepository blankRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                                           JdbcTemplate jdbcTemplate) {
+        return new BlankRepositoryJdbcTemplateImpl(namedParameterJdbcTemplate, jdbcTemplate);
     }
 
 

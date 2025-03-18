@@ -13,6 +13,13 @@
 + GET /api/v1/equipment-sets/{number} - get single equipment-set
 + PATCH /api/v1/equipment-sets/{number}/equipments - add equipments to set
 
+#### blanks
++ GET /api/v1/blanks - blanks list
++ POST /api/v1/blanks - create new blanks
++ GET /api/v1/blanks/{number} - get single blanks
+
+
+
 #### processes
 + GET /api/v1/processes - units list
 + POST /api/v1/processes - create new unit
