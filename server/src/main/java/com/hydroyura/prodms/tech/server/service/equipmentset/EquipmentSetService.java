@@ -1,7 +1,9 @@
 package com.hydroyura.prodms.tech.server.service.equipmentset;
 
+import com.hydroyura.prodms.tech.client.req.EquipmentSetAddEquipmentsReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentSetCreateReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentSetListReq;
+import com.hydroyura.prodms.tech.client.res.EquipmentSetAddEquipmentsRes;
 import com.hydroyura.prodms.tech.client.res.EquipmentSetCreateRes;
 import com.hydroyura.prodms.tech.client.res.EquipmentSetListRes;
 import com.hydroyura.prodms.tech.client.res.SingleEquipmentSetRes;
@@ -12,4 +14,6 @@ public interface EquipmentSetService {
     Optional<SingleEquipmentSetRes> get(String number);
     EquipmentSetListRes list(EquipmentSetListReq filter);
     EquipmentSetCreateRes create(EquipmentSetCreateReq equipment);
+    EquipmentSetAddEquipmentsRes addEquipments(String number, EquipmentSetAddEquipmentsReq equipments);
+
 }

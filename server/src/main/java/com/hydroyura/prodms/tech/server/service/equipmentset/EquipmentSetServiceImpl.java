@@ -1,9 +1,10 @@
 package com.hydroyura.prodms.tech.server.service.equipmentset;
 
 import com.hydroyura.prodms.tech.client.enums.EquipmentSetSortCode;
+import com.hydroyura.prodms.tech.client.req.EquipmentSetAddEquipmentsReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentSetCreateReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentSetListReq;
-import com.hydroyura.prodms.tech.client.res.EquipmentCreateRes;
+import com.hydroyura.prodms.tech.client.res.EquipmentSetAddEquipmentsRes;
 import com.hydroyura.prodms.tech.client.res.EquipmentSetCreateRes;
 import com.hydroyura.prodms.tech.client.res.EquipmentSetListRes;
 import com.hydroyura.prodms.tech.client.res.SingleEquipmentSetRes;
@@ -35,6 +36,11 @@ public class EquipmentSetServiceImpl implements EquipmentSetService {
     public EquipmentSetCreateRes create(EquipmentSetCreateReq equipment) {
         Integer id = equipmentSetRepository.create(equipment);
         return new EquipmentSetCreateRes(id);
+    }
+
+    @Override
+    public EquipmentSetAddEquipmentsRes addEquipments(String number, EquipmentSetAddEquipmentsReq equipments) {
+        return equipmentSetRepository.addEquipments(number, equipments);
     }
 
 

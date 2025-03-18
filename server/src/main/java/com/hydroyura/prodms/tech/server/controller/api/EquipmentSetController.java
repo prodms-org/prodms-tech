@@ -3,9 +3,11 @@ package com.hydroyura.prodms.tech.server.controller.api;
 import static com.hydroyura.prodms.common.utils.RestControllerUtils.buildEmptyApiResponse;
 import static com.hydroyura.prodms.tech.server.SharedConstants.RESPONSE_ERROR_MSG_EQUIPMENT_SET_NOT_FOUND;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import com.hydroyura.prodms.common.model.api.ApiRes;
+import com.hydroyura.prodms.tech.client.req.EquipmentSetAddEquipmentsReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentSetCreateReq;
 import com.hydroyura.prodms.tech.client.req.EquipmentSetListReq;
 import com.hydroyura.prodms.tech.server.service.equipmentset.EquipmentSetService;
@@ -58,10 +60,15 @@ public class EquipmentSetController extends AbstractRestController {
         return new ResponseEntity<ApiRes<?>>(apiRes, HttpStatus.OK);
     }
 
+    @RequestMapping(method = PATCH, value = "/{number}/equipments")
+    public ResponseEntity<ApiRes<?>> addEquipments(@PathVariable String number,
+                                                   @RequestBody EquipmentSetAddEquipmentsReq equipments,
+                                                   HttpServletRequest request) {
+        var apiRes = buildEmptyApiResponse(request);
+        var result = equipmentSetService.addEquipments(number, equipments);
 
+        apiRes.setData(result);
+        return new ResponseEntity<ApiRes<?>>(apiRes, HttpStatus.OK);
+    }
 
 }
-
-/*
-+ PATCH /api/v1/equipment-sets/{number}/equipments - add equipments to set
- */
