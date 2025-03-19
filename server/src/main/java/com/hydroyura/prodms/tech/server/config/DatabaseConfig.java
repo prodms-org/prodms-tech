@@ -1,6 +1,7 @@
 package com.hydroyura.prodms.tech.server.config;
 
 import com.hydroyura.prodms.tech.server.db.repository.BlankRepository;
+import com.hydroyura.prodms.tech.server.db.repository.BlankRepositoryJdbcTemplateImpl;
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentRepository;
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentRepositoryJdbcTemplateImpl;
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentSetRepository;

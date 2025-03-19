@@ -33,7 +33,6 @@ import org.testcontainers.utility.DockerImageName;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
-@RequiredArgsConstructor
 class EquipmentRepositoryJdbcTemplateImplTest {
 
     @ClassRule

@@ -45,4 +45,12 @@ public class RepositoryTestUtils {
         \s
     """;
 
+    public static final String SQL_BLANK_INSERT_NEW = """
+        echo "
+            INSERT INTO blanks (number, material, created_at, updated_at) \s
+            VALUES('%s', '%s', now(), now()) \s
+            RETURNING id;" | psql -U test-pg-user -d test-tech
+        \s
+    """;
+
 }
