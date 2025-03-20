@@ -6,22 +6,25 @@ import com.hydroyura.prodms.tech.client.req.BlankCreateReq;
 import com.hydroyura.prodms.tech.client.req.BlankListReq;
 import com.hydroyura.prodms.tech.client.res.BlankListRes;
 import com.hydroyura.prodms.tech.client.res.SingleBlankRes;
+import com.hydroyura.prodms.tech.server.exception.InsertBlankException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +35,10 @@ public class BlankRepositoryJdbcTemplateImpl implements BlankRepository {
     private final RowMapper<SingleBlankRes> rowMapperSingleBlank = new BlankRepositoryJdbcTemplateImpl.SingleBlankRowMapper();
     // private final RowMapper<EquipmentListRes.Equipment> rowMapperEquipmentList = new EquipmentRepositoryJdbcTemplateImpl.EquipmentListRowMapper();
 
+    private static final String LOG_MSG_CANNOT_INSERT_BLANK = """
+            Can not insert new blank with values: number = [%s], material = [%s]
+        """;
+
     @Override
     public BlankListRes list(BlankListReq filter) {
         return null;
@@ -39,7 +46,30 @@ public class BlankRepositoryJdbcTemplateImpl implements BlankRepository {
 
     @Override
     public Integer create(BlankCreateReq blank) {
-        return 0;
+        String nativeQuery = """
+            INSERT INTO blanks (number, material, params, created_at, updated_at)
+                VALUES (:number, :material, :params, now(), now())
+                RETURNING id
+            """;
+
+        SqlParameterSource params = new MapSqlParameterSource()
+            .addValue("number", blank.getNumber())
+            .addValue("material", blank.getMaterial())
+            .addValue("params", blank.getParams());
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        try {
+            namedParameterJdbcTemplate.update(nativeQuery, params, keyHolder);
+            return Objects.requireNonNull(keyHolder.getKey()).intValue();
+        } catch (DuplicateKeyException e) {
+            log.error(e.getMessage(), e);
+            throw new InsertBlankException(
+                LOG_MSG_CANNOT_INSERT_BLANK.formatted(
+                    blank.getNumber(),
+                    blank.getMaterial()),
+                e);
+        }
     }
 
     @Override

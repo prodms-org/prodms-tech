@@ -1,12 +1,18 @@
 package com.hydroyura.prodms.tech.server.db.repository;
 
+import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils.SQL_BLANK_GET_ID_BY_NUMBER;
 import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils.SQL_BLANK_INSERT_NEW;
 import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils.SQL_COMMON_TRUNCATE;
 
 import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils.SQL_PROCESS_INSERT_NEW;
+import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils.extractIdFromExecResult;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hydroyura.prodms.tech.client.req.BlankCreateReq;
 import com.hydroyura.prodms.tech.client.res.SingleBlankRes;
+import com.hydroyura.prodms.tech.server.exception.InsertBlankException;
 import java.util.List;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.AfterAll;
@@ -14,6 +20,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -103,26 +110,15 @@ class BlankRepositoryJdbcTemplateImplTest {
         var execProcessResult1 = TEST_DB_CONTAINER.execInContainer("bash", "-c",
             SQL_PROCESS_INSERT_NEW.formatted(processNumber1, processUnit1, 0, blankId)
         );
+        Integer processId1 = extractIdFromExecResult(execProcessResult1);
 
-        // TODO: extract into separate static method
-        Integer processId1 = Integer.valueOf(
-            execProcessResult1.getStdout()
-                .split("\n")[2]
-                .replace(" ", "")
-        );
         // -- add process #2
         String processNumber2 = "PROCESS_NUMBER_2";
         String processUnit2 = "PROCESS_UNIT_2";
         var execProcessResult2 = TEST_DB_CONTAINER.execInContainer("bash", "-c",
             SQL_PROCESS_INSERT_NEW.formatted(processNumber2, processUnit2, 0, blankId)
         );
-
-        // TODO: extract into separate static method
-        Integer processId2 = Integer.valueOf(
-            execProcessResult2.getStdout()
-                .split("\n")[2]
-                .replace(" ", "")
-        );
+        Integer processId2 = extractIdFromExecResult(execProcessResult2);
 
         // when
         var result = blankRepository.get(number);
@@ -147,4 +143,39 @@ class BlankRepositoryJdbcTemplateImplTest {
         // then
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void create__OK() throws Exception {
+        // given
+        BlankCreateReq req = new BlankCreateReq();
+        req.setNumber("BLANK_NUMBER_1");
+        req.setMaterial("BLANK_MATERIAL_1");
+        var id = blankRepository.create(req);
+
+        // when
+        var execResult = TEST_DB_CONTAINER.execInContainer(
+            "bash", "-c",
+            SQL_BLANK_GET_ID_BY_NUMBER.formatted(req.getNumber())
+        );
+        Integer idFromExec = extractIdFromExecResult(execResult);
+
+        // then
+        assertEquals(id, idFromExec);
+    }
+
+    @Test
+    void create__DUBLICATION() throws Exception {
+        // given
+        BlankCreateReq req = new BlankCreateReq();
+        req.setNumber("BLANK_NUMBER_1");
+        req.setMaterial("BLANK_MATERIAL_1");
+        blankRepository.create(req);
+
+        // when
+        Executable executable = () -> blankRepository.create(req);
+
+        // then
+        assertThrows(InsertBlankException.class, executable);
+    }
+
 }

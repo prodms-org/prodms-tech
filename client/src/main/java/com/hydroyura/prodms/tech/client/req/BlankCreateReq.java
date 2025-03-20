@@ -1,11 +1,12 @@
 package com.hydroyura.prodms.tech.client.req;
 
-import com.hydroyura.prodms.tech.client.enums.BlankSortCode;
 import lombok.Data;
 
 @Data
 public class BlankCreateReq {
 
-
+    private String number;
+    private String material;
+    private String params;
 
 }

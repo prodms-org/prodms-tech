@@ -1,6 +1,12 @@
 package com.hydroyura.prodms.tech.server.db.repository;
 
+import org.testcontainers.containers.Container;
+
 public class RepositoryTestUtils {
+
+    public static Integer extractIdFromExecResult(Container.ExecResult execResult) {
+        return Integer.valueOf(execResult.getStdout().split("\n")[2].replace(" ", ""));
+    }
 
     public static final String SQL_COMMON_TRUNCATE =
         "echo \"TRUNCATE TABLE %s CASCADE;\" | psql -U test-pg-user -d test-tech";
@@ -27,6 +33,14 @@ public class RepositoryTestUtils {
             WHERE number = '%s'" | psql -U test-pg-user -d test-tech
         \s
     """;
+
+    public static final String SQL_BLANK_GET_ID_BY_NUMBER = """
+        echo "
+            SELECT id FROM blanks \s
+            WHERE number = '%s'" | psql -U test-pg-user -d test-tech
+        \s
+    """;
+
 
     public static final String SQL_EQ_SET_INSERT_NEW = """
         echo "
