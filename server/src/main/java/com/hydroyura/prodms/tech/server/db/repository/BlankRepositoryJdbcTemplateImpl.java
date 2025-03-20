@@ -69,13 +69,13 @@ public class BlankRepositoryJdbcTemplateImpl implements BlankRepository {
             populateField(rs, blank::setId, "b_id", Integer.class);
             populateField(rs, blank::setNumber, "b_number", String.class);
             populateField(rs, blank::setMaterial, "b_material", String.class);
-            populateField(rs, blank::setParams, "b_params", byte[].class);
+            populateField(rs, blank::setParams, "b_params", String.class);
             populateField(rs, blank::setCreatedAt, "b_created_at", OffsetDateTime.class);
             populateField(rs, blank::setUpdatedAt, "b_updated_at", OffsetDateTime.class);
 
             Set<SingleBlankRes.Process> processes = new HashSet<>();
             do {
-                if (Objects.nonNull(rs.getObject("eq_sets_id", Integer.class))) {
+                if (Objects.nonNull(rs.getObject("pr_id", Integer.class))) {
                     SingleBlankRes.Process process = new SingleBlankRes.Process();
                     populateField(rs, process::setId, "pr_id", Integer.class);
                     populateField(rs, process::setNumber, "pr_number", String.class);

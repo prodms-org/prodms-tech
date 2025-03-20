@@ -11,7 +11,7 @@ public class SingleBlankRes {
     private Integer id;
     private String number;
     private String material;
-    private byte[] params;
+    private String params;
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
     private Set<SingleBlankRes.Process> processes = Collections.emptySet();

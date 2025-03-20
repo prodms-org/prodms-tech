@@ -47,8 +47,16 @@ public class RepositoryTestUtils {
 
     public static final String SQL_BLANK_INSERT_NEW = """
         echo "
-            INSERT INTO blanks (number, material, created_at, updated_at) \s
-            VALUES('%s', '%s', now(), now()) \s
+            INSERT INTO blanks (number, material, params, created_at, updated_at) \s
+            VALUES('%s', '%s', '{\\"name\\": \\"test-name\\", \\"age\\": 17}', now(), now()) \s
+            RETURNING id;" | psql -U test-pg-user -d test-tech
+        \s
+    """;
+
+    public static final String SQL_PROCESS_INSERT_NEW = """
+        echo "
+            INSERT INTO processes (number, unit, created_at, updated_at, priority, blank_id) \s
+            VALUES('%s', '%s', now(), now(), %s, %s) \s
             RETURNING id;" | psql -U test-pg-user -d test-tech
         \s
     """;

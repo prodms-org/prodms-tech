@@ -1,6 +1,5 @@
 package com.hydroyura.prodms.tech.server.db.repository;
 
-import com.hydroyura.prodms.tech.client.req.EquipmentSetListReq;
 import java.sql.ResultSet;
 import java.util.Optional;
 import java.util.function.Consumer;
