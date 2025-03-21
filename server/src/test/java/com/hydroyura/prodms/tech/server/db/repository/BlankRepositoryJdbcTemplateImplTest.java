@@ -4,13 +4,16 @@ import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils
 import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils.SQL_BLANK_INSERT_NEW;
 import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils.SQL_COMMON_TRUNCATE;
 
+import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils.SQL_EQ_SET_INSERT_NEW;
 import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils.SQL_PROCESS_INSERT_NEW;
 import static com.hydroyura.prodms.tech.server.db.repository.RepositoryTestUtils.extractIdFromExecResult;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.hydroyura.prodms.tech.client.enums.BlankSortCode;
 import com.hydroyura.prodms.tech.client.req.BlankCreateReq;
+import com.hydroyura.prodms.tech.client.req.BlankListReq;
 import com.hydroyura.prodms.tech.client.res.SingleBlankRes;
 import com.hydroyura.prodms.tech.server.exception.InsertBlankException;
 import java.util.List;
@@ -177,5 +180,50 @@ class BlankRepositoryJdbcTemplateImplTest {
         // then
         assertThrows(InsertBlankException.class, executable);
     }
+
+    @Test
+    void list__OK() throws Exception {
+        // given
+        BlankListReq filter = new BlankListReq();
+        filter.setItemsPerPage(10);
+        filter.setPage(2);
+        filter.setSortCode(BlankSortCode.MATERIAL_ASC);
+
+        int total = 100;
+        for (int i = 1; i <= total ; i++) {
+            String materialIndex = (total + 1 - i) <= 9 ? "0" + (total + 1 - i) : String.valueOf(total + 1 - i);
+            String material = "BLANK_MATERIAL__" + materialIndex;
+
+            String numberIndex = i <= 9 ? "0" + i : String.valueOf(i);
+            String number = "BLANK_NUMBER__" + numberIndex;
+
+            TEST_DB_CONTAINER.execInContainer("bash", "-c",
+                SQL_BLANK_INSERT_NEW.formatted(number, material)
+            );
+
+        }
+
+        // when
+        var result = blankRepository.list(filter);
+
+        // then
+        // -- check total count
+        assertEquals(total, result.getTotalCount());
+        // -- check current count
+        assertEquals(filter.getItemsPerPage(), result.getBlanks().size());
+        // -- check offset && sort
+        Integer indexStart = Integer.valueOf(result.getBlanks()
+            .stream()
+            .toList()
+            .get(0).getMaterial().split("__")[1]);
+        assertEquals(filter.getItemsPerPage() * filter.getPage(), indexStart);
+        Integer indexEnd = Integer.valueOf(result.getBlanks()
+            .stream()
+            .toList()
+            .get(result.getBlanks().size() - 1).getMaterial().split("__")[1]);
+        assertEquals(filter.getItemsPerPage() * filter.getPage() + filter.getItemsPerPage() - 1, indexEnd);
+
+    }
+
 
 }

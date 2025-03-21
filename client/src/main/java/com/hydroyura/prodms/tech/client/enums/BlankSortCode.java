@@ -9,8 +9,8 @@ public enum BlankSortCode {
 
     NUMBER_ASC(0, "number", "ASC"),
     NUMBER_DESC(1, "number", "DESC"),
-    NAME_ASC(2, "name", "ASC"),
-    NAME_DESC(3, "name", "DESC");
+    MATERIAL_ASC(2, "material", "ASC"),
+    MATERIAL_DESC(3, "material", "DESC");
 
     BlankSortCode(Integer code, String field, String direction) {
         this.code = code;

@@ -1,5 +1,6 @@
 package com.hydroyura.prodms.tech.server.db.repository;
 
+import static com.hydroyura.prodms.tech.server.db.repository.JdbcTemplateUtils.buildSortAndPagination;
 import static com.hydroyura.prodms.tech.server.db.repository.JdbcTemplateUtils.populateField;
 
 import com.hydroyura.prodms.tech.client.req.BlankCreateReq;
@@ -10,11 +11,15 @@ import com.hydroyura.prodms.tech.server.exception.InsertBlankException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -33,7 +38,7 @@ public class BlankRepositoryJdbcTemplateImpl implements BlankRepository {
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<SingleBlankRes> rowMapperSingleBlank = new BlankRepositoryJdbcTemplateImpl.SingleBlankRowMapper();
-    // private final RowMapper<EquipmentListRes.Equipment> rowMapperEquipmentList = new EquipmentRepositoryJdbcTemplateImpl.EquipmentListRowMapper();
+    private final RowMapper<BlankListRes.Blank> rowMapperEquipmentList = new BlankRepositoryJdbcTemplateImpl.BlankListRowMapper();
 
     private static final String LOG_MSG_CANNOT_INSERT_BLANK = """
             Can not insert new blank with values: number = [%s], material = [%s]
@@ -41,7 +46,87 @@ public class BlankRepositoryJdbcTemplateImpl implements BlankRepository {
 
     @Override
     public BlankListRes list(BlankListReq filter) {
-        return null;
+        String nativeBaseQueryCount = """
+            SELECT COUNT(*) FROM blanks b
+            """;
+
+        List<BlankRepositoryJdbcTemplateImpl.Predicate> predicates = new ArrayList<>();
+
+        Optional
+            .ofNullable(filter.getNumberLike())
+            .map(v -> new BlankRepositoryJdbcTemplateImpl.Predicate("b.number", v, BlankRepositoryJdbcTemplateImpl.Operation.LIKE))
+            .ifPresent(predicates::add);
+        Optional
+            .ofNullable(filter.getNameLike())
+            .map(v -> new BlankRepositoryJdbcTemplateImpl.Predicate("b.name", v, BlankRepositoryJdbcTemplateImpl.Operation.LIKE))
+            .ifPresent(predicates::add);
+
+        StringBuilder sbCount = new StringBuilder(nativeBaseQueryCount);
+        if (!predicates.isEmpty()) {
+            sbCount.append(" WHERE ");
+            String countCondition = predicates
+                .stream()
+                .map(BlankRepositoryJdbcTemplateImpl.Predicate::buildCondition)
+                .collect(Collectors.joining(" AND "));
+            sbCount.append(countCondition);
+        }
+        String nativeQueryCount = sbCount.toString();
+        Integer totalCount = jdbcTemplate.queryForObject(nativeQueryCount, Integer.class);
+
+        String nativeBaseQueryValues = """
+            SELECT b.id AS b_id, b.number AS b_number, b.material AS b_material, b.params AS b_params,
+                   b.created_at AS b_created_at, b.updated_at AS b_updated_at
+               FROM blanks b
+            """;
+        StringBuilder sbValues = new StringBuilder(nativeBaseQueryValues);
+        if (!predicates.isEmpty()) {
+            sbValues.append(" WHERE ");
+            String countCondition = predicates
+                .stream()
+                .map(BlankRepositoryJdbcTemplateImpl.Predicate::buildCondition)
+                .collect(Collectors.joining(" AND "));
+            sbValues.append(countCondition);
+        }
+        String pagination = buildPagination(filter);
+        sbValues.append(pagination);
+        String nativeQueryValues = sbValues.toString();
+        List<BlankListRes.Blank> values = jdbcTemplate.query(nativeQueryValues, rowMapperEquipmentList);
+
+        BlankListRes response = new BlankListRes();
+        response.setBlanks(values);
+        response.setTotalCount(totalCount);
+        return response;
+    }
+
+    private String buildPagination(BlankListReq req) {
+        return buildSortAndPagination(
+            req.getSortCode().getField(),
+            req.getSortCode().getDirection(),
+            req.getItemsPerPage(),
+            req.getPage() * req.getItemsPerPage()
+        );
+    }
+
+    @AllArgsConstructor
+    private static class Predicate {
+        private String field;
+        private String value;
+        private BlankRepositoryJdbcTemplateImpl.Operation operation;
+
+        public String buildCondition() {
+            return field + " " + operation.getValue() + " " + value;
+        }
+    }
+
+    @Getter
+    private enum Operation {
+        LIKE("LIKE");
+
+        Operation(String value) {
+            this.value = value;
+        }
+
+        private final String value;
     }
 
     @Override
@@ -116,6 +201,21 @@ public class BlankRepositoryJdbcTemplateImpl implements BlankRepository {
 
             blank.setProcesses(processes);
             return blank;
+        }
+    }
+
+    private static class BlankListRowMapper implements RowMapper<BlankListRes.Blank> {
+
+        @Override
+        public BlankListRes.Blank mapRow(ResultSet rs, int rowNum) throws SQLException {
+            BlankListRes.Blank entity = new BlankListRes.Blank();
+            populateField(rs, entity::setId, "b_id", Integer.class);
+            populateField(rs, entity::setNumber, "b_number", String.class);
+            populateField(rs, entity::setMaterial, "b_material", String.class);
+            populateField(rs, entity::setParams, "b_params", String.class);
+            populateField(rs, entity::setCreatedAt, "b_created_at", OffsetDateTime.class);
+            populateField(rs, entity::setUpdatedAt, "b_updated_at", OffsetDateTime.class);
+            return entity;
         }
     }
 }
