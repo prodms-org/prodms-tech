@@ -75,4 +75,19 @@ public class RepositoryTestUtils {
         \s
     """;
 
+    public static final String SQL_PROCESS_GET_ID_BY_NUMBER = """
+        echo "
+            SELECT id FROM processes \s
+            WHERE number = '%s'" | psql -U test-pg-user -d test-tech
+        \s
+    """;
+
+    public static final String SQL_PROCESS_STEP_INSERT_NEW = """
+        echo "
+            INSERT INTO processes_steps (number, equipment_set_id, process_id, order_num, times, created_at, updated_at) \s
+            VALUES('%s', %s, %s, %s, '{\\"name\\": \\"test-name\\", \\"age\\": 17}', now(), now()) \s
+            RETURNING id;" | psql -U test-pg-user -d test-tech
+        \s
+    """;
+
 }

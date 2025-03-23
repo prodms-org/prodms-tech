@@ -6,6 +6,10 @@ import com.hydroyura.prodms.tech.server.db.repository.EquipmentRepository;
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentRepositoryJdbcTemplateImpl;
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentSetRepository;
 import com.hydroyura.prodms.tech.server.db.repository.EquipmentSetRepositoryJdbcTemplateImpl;
+import com.hydroyura.prodms.tech.server.db.repository.ProcessRepository;
+import com.hydroyura.prodms.tech.server.db.repository.ProcessRepositoryJdbcTemplateImpl;
+import com.hydroyura.prodms.tech.server.db.repository.ProcessStepRepository;
+import com.hydroyura.prodms.tech.server.db.repository.ProcessStepRepositoryJdbcTemplateImpl;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;
@@ -46,7 +50,6 @@ public class DatabaseConfig {
         return flyway;
     }
 
-
     @Bean
     @Order(3)
     EquipmentRepository equipmentRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
@@ -68,8 +71,17 @@ public class DatabaseConfig {
         return new BlankRepositoryJdbcTemplateImpl(namedParameterJdbcTemplate, jdbcTemplate);
     }
 
+    @Bean
+    @Order(5)
+    ProcessRepository processRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                                      JdbcTemplate jdbcTemplate) {
+        return new ProcessRepositoryJdbcTemplateImpl(namedParameterJdbcTemplate, jdbcTemplate);
+    }
 
-
-
-
+    @Bean
+    @Order(6)
+    ProcessStepRepository processStepRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+                                            JdbcTemplate jdbcTemplate) {
+        return new ProcessStepRepositoryJdbcTemplateImpl(namedParameterJdbcTemplate, jdbcTemplate);
+    }
 }

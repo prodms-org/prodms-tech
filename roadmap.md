@@ -18,12 +18,11 @@
 + POST /api/v1/blanks - create new blanks
 + GET /api/v1/blanks/{number} - get single blanks
 
-
-
 #### processes
-+ GET /api/v1/processes - units list
-+ POST /api/v1/processes - create new unit
-+ GET /api/v1/processes/{number} - get single unit
++ GET /api/v1/processes - processes list
++ POST /api/v1/processes - create new process
++ GET /api/v1/processes/{number} - get single process 
++ PATCH /api/v1/processes/{number}/process-steps - add step to process
 
 #### processes-steps
 + GET /api/v1/processes/{number}/steps - list

@@ -59,11 +59,3 @@ public class BlankController extends AbstractRestController {
     }
 
 }
-
-
-/*
-#### blanks
-+ GET /api/v1/blanks - blanks list
-+ POST /api/v1/blanks - create new blanks
-+ GET /api/v1/blanks/{number} - get single blanks
- */
