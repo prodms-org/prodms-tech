@@ -31,6 +31,7 @@ public class ProcessStepServiceImpl implements ProcessStepService {
 
     @Override
     public ProcessStepCreateRes create(ProcessStepCreateReq entity) {
-        return null;
+        Integer id = repository.create(entity);
+        return new ProcessStepCreateRes(id);
     }
 }
