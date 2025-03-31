@@ -11,6 +11,7 @@ public class DefaultParams {
     private EquipmentSetList equipmentSetList;
     private BlankList blankList;
     private ProcessList processList;
+    private ProcessStepList processStepList;
 
     @Data
     public static class EquipmentList {
@@ -35,6 +36,13 @@ public class DefaultParams {
 
     @Data
     public static class ProcessList {
+        private Integer itemsPerPage;
+        private Integer page;
+        private Integer sortCode;
+    }
+
+    @Data
+    public static class ProcessStepList {
         private Integer itemsPerPage;
         private Integer page;
         private Integer sortCode;
