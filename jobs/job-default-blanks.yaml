@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: blanks-populator-job
+  namespace: prodms
+spec:
+  template:
+    spec:
+      containers:
+        - name: curl-container
+          image: richardjkendall/curl-bash:latest
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              blanksSets=(
+                '{"number": "BL.100.50.12", "material": "Steel 40X", "params": "{'param1': 1, 'param2': 2}"}'
+                '{"number": "BL.30.50.12", "material": "Steel 40X", "params": "{'param1': 1, 'param2': 21}"}'
+                '{"number": "BL.550.10.12", "material": "Steel 20X", "params": "{'param1': 16, 'param2': 21}"}'
+                '{"number": "BL.102.10.12", "material": "Steel 20X", "params": "{'param1': 1, 'param2': 22}"}'
+                '{"number": "BL.105.502.12", "material": "Steel 20X", "params": "{'param1': 1, 'param2': 23}"}'
+                '{"number": "BL.105.540.13", "material": "Steel 45", "params": "{'param1': 16, 'param2': 23}"}'
+                '{"number": "BL.100.350.14", "material": "Steel 45", "params": "{'param1': 1, 'param2': 24}"}'
+                '{"number": "BL.100.350.15", "material": "Steel 45", "params": "{'param1': 1, 'param2': 25}"}'
+                '{"number": "BL.19.30.12", "material": "Steel 45", "params": "{'param1': 15, 'param2': 25}"}'
+                '{"number": "BL.103.51.19", "material": "Steel 45", "params": "{'param1': 14, 'param2': 2}"}'
+                '{"number": "BL.100.53.20", "material": "Steel 35", "params": "{'param1': 13, 'param2': 21}"}'
+                '{"number": "BL.100.55.21", "material": "Steel 35", "params": "{'param1': 12, 'param2': 21}"}'
+                '{"number": "BL.100.40.122", "material": "Steel 35", "params": "{'param1': 11, 'param2': 2}"}'
+              )
+              
+              
+              
+              url=http://tech-svc.prodms.svc:8080/api/v1/blanks
+              
+              for body in "${blanksSets[@]}"; do
+                echo "Sending request with body: $body"
+                curl -X POST ${url} \
+                  -H "Content-Type: application/json" \
+                  -d "$body"
+                echo ""
+              done
+      restartPolicy: Never
