@@ -133,7 +133,7 @@ public class BlankRepositoryJdbcTemplateImpl implements BlankRepository {
     public Integer create(BlankCreateReq blank) {
         String nativeQuery = """
             INSERT INTO blanks (number, material, params, created_at, updated_at)
-                VALUES (:number, :material, :params, now(), now())
+                VALUES (:number, :material, :params::jsonb, now(), now())
                 RETURNING id
             """;
 
